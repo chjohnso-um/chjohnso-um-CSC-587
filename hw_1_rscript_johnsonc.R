@@ -7,6 +7,9 @@ library(ggplot2)
 library(tidyverse)
 library(tidyr)
 
+# This assignment will need the following datasets: "Su_raw_matrix.txt",
+# "diabetes_train.csv", and "titanic.csv".
+
 # -----
 # 1. Use ”Su_raw_matrix.txt” for the following questions (30 points).
 
@@ -132,6 +135,7 @@ ggplot(dat, aes(x = rating, fill = cond)) + geom_density(alpha = .3)
 # 3f.
 # Set the drive to where "diabetes_train.csv" is saved.
 setwd("C:/Users/Chris/OneDrive/Desktop/U of M/Winter25/CSC587/from_gdrive")
+
 # Step 1: Read the "diabetes_train.csv" file and create a dataframe named 'diabetes'
 # use commas for sep and true for header.
 diabetes = read.csv("diabetes_train.csv", sep = ',', header = TRUE)
@@ -164,6 +168,9 @@ ggplot(diabetes, aes(x = mass, fill = class)) + geom_density(alpha = .3)
 # to import the tidyr library. Otherwise, the chain of operations through ”piping” 
 # won’t work. (20 points):
   
+# Set the drive to where "titanic.csv" is saved.
+setwd("C:/Users/Chris/OneDrive/Desktop/U of M/Winter25/CSC587/from_gdrive")
+
 # Step 1:  Read the "titanic.csv" file and create a dataframe named passengers.
 passengers = read.csv("titanic.csv", sep = ',', header = TRUE)
 # Step 2: View it to confirm it looks right.
