@@ -1,0 +1,155 @@
+---
+title: "K-Means and K-Medoids Clustering on Simulated Data"
+author: "Halil Bisgin"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Optional: Can you try to determine the shape of a data point based on its real class label and color based on its cluster membership? I thought I could kind of determine the shape of a data point based on its real class label and its color based on its cluster membership, but I am uncertain based on the the two plots fro k-means and k-medoids where the smaller clusters and colors don't quite seem to follow the same pattern. I thin I'll have to observe more data. 
+
+## Introduction
+
+In this analysis, we simulate data to apply both **K-Means** and **K-Medoids** clustering algorithms, compare their results, and visualize the clustering outcomes.
+
+We also measure the time taken for each clustering method.
+
+## Load Required Libraries
+
+```{r setup, message=FALSE, warning=FALSE}
+# Install libraries if not already installed
+# install.packages("cluster")
+# install.packages("factoextra")
+# install.packages("ggplot2")
+# install.packages("tictoc")
+
+# Load necessary libraries
+library(cluster)      # For K-Medoids (PAM)
+library(factoextra)   # For visualization
+library(ggplot2)      # For plotting
+library(tictoc)       # For measuring execution time
+```
+
+```{r data prep}
+# Set random seed for reproducibility
+set.seed(42)
+
+# Create 3 clusters with normal distribution
+# Change n from 300 to 1500 in increments of 200
+n <- 1500  # Total number of data points
+cluster1 <- data.frame(x = rnorm(n/3, mean = 2, sd = 0.5), y = rnorm(n/3, mean = 2, sd = 0.5))
+cluster2 <- data.frame(x = rnorm(n/3, mean = 6, sd = 0.5), y = rnorm(n/3, mean = 6, sd = 0.5))
+cluster3 <- data.frame(x = rnorm(n/3, mean = 10, sd = 0.5), y = rnorm(n/3, mean = 2, sd = 0.5))
+
+# Combine clusters into one dataset
+data <- rbind(cluster1, cluster2, cluster3)
+colnames(data) <- c("feature1", "feature2")
+
+# Normalize the data
+scaled_data <- scale(data)
+
+```
+# Apply K-Means Clustering
+
+```{r k-means}
+tic("K-Means")  # Start timer
+kmeans_result <- kmeans(scaled_data, centers = 6, nstart = 10)
+toc()  # Stop timer
+```
+
+# Apply K-Medoids Clustering
+```{r k-medoids}
+tic("K-Medoids")  # Start timer
+kmedoids_result <- pam(scaled_data, 5)
+toc()  # Stop timer
+
+```
+
+# Prep data for visualization
+```{r get memberships }
+data$KMeans_Cluster <- as.factor(kmeans_result$cluster)
+data$KMedoids_Cluster <- as.factor(kmedoids_result$clustering)
+```
+
+# Plotting k-means clusters
+```{r vis kmeans}
+p1 <- ggplot(data, aes(x = feature1, y = feature2, color = KMeans_Cluster)) +
+  geom_point(size = 3) +
+  ggtitle("K-Means Clustering") +
+  theme_minimal()
+
+# Print the K-Means plot
+print(p1)
+```
+
+# Plotting k-medoids clusters
+```{r kmedoids}
+p2 <- ggplot(data, aes(x = feature1, y = feature2, color = KMedoids_Cluster)) +
+  geom_point(size = 3) +
+  ggtitle("K-Medoids Clustering") +   theme_minimal()
+
+# Print the K-Means plot
+print(p2)
+```
+
+
+
+```{r}
+# Load the Iris dataset
+library(datasets)
+data(iris)
+summary(iris)
+
+df <- iris
+scaled_data <-df
+
+# I'm afraid from this point on I did something wrong and didn't know how to incorporate the Iris data set properly for clustering
+
+
+```
+# Apply K-Means Clustering for Iris
+
+```{r k-means_iris}
+# Apply k-means clustering with k = 3 (for the three species of Iris)
+set.seed(20) # for reproducibility
+iris_cluster <- kmeans(iris[, 1:4], centers = 3)
+
+# Add the cluster assignments to the iris dataset
+iris$Cluster <- as.factor(iris_cluster$cluster)
+
+```
+
+# Apply K-Medoids Clustering for Iris
+```{r k-medoids_iris}
+tic("K-Medoids")  # Start timer
+kmedoids_result <- pam(scaled_data, 3)
+toc()  # Stop timer
+
+```
+
+# Prep data for visualization for Iris
+```{r get memberships_iris }
+data$KMeans_Cluster <- as.factor(kmeans_result$cluster)
+data$KMedoids_Cluster <- as.factor(kmedoids_result$clustering)
+```
+
+# Plotting k-means clusters fro Iris
+```{r vis kmeans_iris}
+p1 <- ggplot(scaled_data, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point(size = 3) +
+  ggtitle("K-Means Clustering") +
+  theme_minimal()
+
+# Print the K-Means plot
+print(p1)
+```
+# Plotting k-medoids clusters for Iris
+```{r kmedoids_irisplot}
+p2 <- ggplot(scaled_data, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point(size = 3) +
+  ggtitle("K-Medoids Clustering") +
+  theme_minimal()
+
+# Print the K-Medoids plot
+print(p2)
+```
